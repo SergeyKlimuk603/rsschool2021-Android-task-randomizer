@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 
 class SecondFragment : Fragment() {
@@ -14,11 +15,19 @@ class SecondFragment : Fragment() {
     private var backButton: Button? = null
     private var result: TextView? = null
 
-    // My code
     private var listener: MyFragmentListener? = null
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = context as MyFragmentListener
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // переопределяем системную кнопку back
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            back()
+        }
     }
 
     override fun onCreateView(
@@ -40,18 +49,11 @@ class SecondFragment : Fragment() {
         result?.text = generate(min, max).toString()
 
         backButton?.setOnClickListener {
-            // _TODO: implement back
-            val value = result?.text.toString().toInt()
-            listener?.doSomething(tag, value)
+            back()
         }
     }
 
     private fun generate(min: Int, max: Int): Int {
-        // _TODO: generate random number
-
-        //return 0
-
-        // My code
         return (min..max).random()
     }
 
@@ -61,18 +63,18 @@ class SecondFragment : Fragment() {
         fun newInstance(min: Int, max: Int): SecondFragment {
             val fragment = SecondFragment()
             val args = Bundle()
-
-            // _TODO: implement adding arguments
-
-            // My code
             args.putInt(MIN_VALUE_KEY, min)
             args.putInt(MAX_VALUE_KEY, max)
             fragment.arguments = args
-
             return fragment
         }
 
         private const val MIN_VALUE_KEY = "MIN_VALUE"
         private const val MAX_VALUE_KEY = "MAX_VALUE"
+    }
+
+    private fun back() {
+        val value = result?.text.toString().toInt()
+        listener?.doSomething(tag, value)
     }
 }
